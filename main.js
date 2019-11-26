@@ -1,5 +1,6 @@
 window.onload = start;
 
+
 function start() {
     d3.csv('data.csv', function(error, data) {
 
@@ -74,4 +75,7 @@ function start() {
             index++;
         }
     });
+
+    
+
 }
