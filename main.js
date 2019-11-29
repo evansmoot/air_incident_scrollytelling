@@ -91,11 +91,13 @@ function display() {
     // Here is where we can add code to update map vis based on scrolling progress
     switch(index) {
       case 0:
+        svg.selectAll("circle")
+        .attr("fill", null);
         break;
       case 1:
         var point = projection(firstArray[0].Latitude, firstArray[0].Longitude);
         svg.selectAll("circle")
-          .data([firstArray[0].Latitude, firstArray[0].Longitude]).enter()
+          .data(point).enter()
           .append("circle")
           .attr("cx", function (d) { return projection(d)[0]; })
 		      .attr("cy", function (d) { return projection(d)[1]; })
