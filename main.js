@@ -1,4 +1,16 @@
 window.onload = start;
+var firstArray;
+var secondArray;
+var thirdArray;
+var fourthArray;
+var fifthArray;
+var sixthArray;
+var seventhArray;
+var eighthArray;
+var ninthArray;
+var tenthArray;
+
+var projection = d3.geoMercator();
 
 function start() {
   d3.csv('data.csv', function(error, data) {
@@ -16,17 +28,6 @@ function start() {
       //so they can appear/disappear easily as we scroll
 
       var index = 1;
-      
-      var firstArray;
-      var secondArray;
-      var thirdArray;
-      var fourthArray;
-      var fifthArray;
-      var sixthArray;
-      var seventhArray;
-      var eighthArray;
-      var ninthArray;
-      var tenthArray;
 
       while(incidents.length) {
           switch(index) {
@@ -87,6 +88,36 @@ function display() {
 
   scroll.on('progress', function (index, progress) {
     // map.update(index, progress);
-    // Hear is where we can add code to update map vis based on scrolling progress
+    // Here is where we can add code to update map vis based on scrolling progress
+    switch(index) {
+      case 0:
+        break;
+      case 1:
+        var point = projection(firstArray[0].Latitude, firstArray[0].Longitude);
+        svg.selectAll("circle")
+          .data([firstArray[0].Latitude, firstArray[0].Longitude]).enter()
+          .append("circle")
+          .attr("cx", function (d) { return projection(d)[0]; })
+		      .attr("cy", function (d) { return projection(d)[1]; })
+		      .attr("r", "8px")
+		      .attr("fill", "red");
+        break;
+      case 2:
+        break;
+      case 3:
+        break;
+      case 4:
+        break;
+      case 5:
+        break;
+      case 6:
+        break;
+      case 7:
+        break;
+      case 8:
+        break;
+      case 9:
+        break;
+    }
   });
 }
