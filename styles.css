@@ -30,3 +30,9 @@ svg.fixed {
 	font-weight: normal;
 	font-family: 'Orienta', sans-serif;
 }
+.states {
+    fill: lightblue;
+}
+.state-borders {
+    fill: lightblue;
+}
