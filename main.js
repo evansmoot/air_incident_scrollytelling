@@ -314,7 +314,7 @@ function display() {
       svg.append('g').attr('class', 'y axis').attr('transform', 'translate(65, 0)').call(crashAxis);
       svg.append('text').attr('class', 'label').attr('transform', 'translate(15, 350) rotate(270)').text('Number of Crashes');
       svg.append('g').attr('class', 'x axis').attr('transform', 'translate(25, 550)').call(condAxis);
-      svg.append('text').attr('class', 'label').attr('transform', 'translate(450, 595)').text('Weather Condition');
+      svg.append('text').attr('class', 'label').attr('transform', 'translate(250, 595)').text('Weather Condition');
 
       svg.selectAll("bar").data(byCond).enter().append("rect")
       .style("fill", function(d) {
