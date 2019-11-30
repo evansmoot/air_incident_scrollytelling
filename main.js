@@ -10,13 +10,41 @@ var eighthArray;
 var ninthArray;
 var tenthArray;
 
-var projection = d3.geoMercator();
+var incidents;
+var svg = d3.select("svg");
+
+var projection = d3.geoAlbersUsa().translate(960/2 + 300,600/2);
+
+
+function displayMap() {
+  
+  var path = d3.geoPath();
+
+  svg.attr("transform", "translate(300, 0)")
+    
+  svg.position
+  d3.json("https://d3js.org/us-10m.v1.json", function(error, us) {
+    if (error) throw error;
+
+    svg.append("g")
+      .attr("class", "states")
+      .selectAll("path")
+      .data(topojson.feature(us, us.objects.states).features)
+      .enter().append("path")
+      .attr("d", path);
+
+    svg.append("path")
+        .attr("class", "state-borders")
+        .attr("d", path(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; })));
+  });
+}
+
 
 function start() {
   d3.csv('data.csv', function(error, data) {
 
       //Filter out any data without longitude and latitude since we can't map those
-      var incidents = data.filter(function (d) {
+      incidents = data.filter(function (d) {
           return (d.Longitude != "" || d.Latitude != "") && d.Country == "United States";
       })
 
@@ -91,18 +119,21 @@ function display() {
     // Here is where we can add code to update map vis based on scrolling progress
     switch(index) {
       case 0:
-        svg.selectAll("circle")
-        .attr("fill", null);
+        svg.selectAll("*").remove();
         break;
       case 1:
-        var point = projection(firstArray[0].Latitude, firstArray[0].Longitude);
+        displayMap();
+        var point = [623, 220];
+        //console.log(point);
         svg.selectAll("circle")
           .data(point).enter()
           .append("circle")
-          .attr("cx", function (d) { return projection(d)[0]; })
-		      .attr("cy", function (d) { return projection(d)[1]; })
-		      .attr("r", "8px")
-		      .attr("fill", "red");
+          .attr("cx", function (d) { 
+            return 623; })  
+		      .attr("cy", function (d) { 
+            return 220; })
+          .attr("r", "8px")
+          .attr("fill", "black");
         break;
       case 2:
         break;
