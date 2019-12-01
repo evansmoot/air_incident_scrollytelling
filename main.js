@@ -31,6 +31,17 @@ function displayMap() {
     svg.append("path")
         .attr("class", "state-borders")
         .attr("d", path(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; })));
+
+    var point = [623, 220];
+    svg.selectAll("circle")
+        .data(point).enter()
+        .append("circle")
+        .attr("cx", function (d) { 
+          return 623; })  
+        .attr("cy", function (d) { 
+          return 220; })
+        .attr("r", "8px")
+        .attr("fill", "red");
   });
 }
 
@@ -236,9 +247,8 @@ function display() {
       case 1:
         d3.selectAll("svg > *").remove();
         displayMap();
-        var point = [623, 220];
         //console.log(point);
-        svg.selectAll("circle")
+        /*svg.selectAll("circle")
           .data(point).enter()
           .append("circle")
           .attr("cx", function (d) { 
@@ -246,7 +256,7 @@ function display() {
 		      .attr("cy", function (d) { 
             return 220; })
           .attr("r", "8px")
-          .attr("fill", "black");
+          .attr("fill", "red");*/
         break;
       case 2:
           d3.selectAll("svg > *").remove();
