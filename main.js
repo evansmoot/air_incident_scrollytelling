@@ -9,6 +9,7 @@ var seventhArray;
 var eighthArray;
 var ninthArray;
 var tenthArray;
+var temp;
 
 var byMake;
 
@@ -54,6 +55,8 @@ function start() {
       });
       //Probably should break the data into ~10 different arrays based on years
       //so they can appear/disappear easily as we scroll
+
+      
 
       byMake = d3.nest()
         .key(function(d) { return d.Make; })
@@ -169,53 +172,47 @@ function start() {
       
       console.log(byCond);
 
-      var index = -1;
+      var index = 1;
 
-      while(incidents.length) {
-          switch(index) {
-              case 1:
-                firstArray = incidents.splice(0,200);
-                console.log(firstArray);
-                break;
-              case 2:
-                secondArray = incidents.splice(0,200);
-                // console.log(secondArray);
-                break;
-              case 3:
-                thirdArray = incidents.splice(0,200);
-                // console.log(thirdArray);
-                break;
-              case 4:
-                fourthArray = incidents.splice(0,200);
-                // console.log(fourthArray);
-                break;
-              case 5:
-                fifthArray = incidents.splice(0,200);
-                // console.log(fifthArray);
-                break;
-              case 6:
-                sixthArray = incidents.splice(0,200);
-                // console.log(sixthArray);
-                break;
-              case 7:
-                seventhArray = incidents.splice(0,200);
-                // console.log(seventhArray);
-                break;
-              case 8:
-                eighthArray = incidents.splice(0,200);
-                // console.log(eighthArray);
-                break;
-              case 9:
-                ninthArray = incidents.splice(0,200);
-                // console.log(ninthArray);
-                break;
-              case 10:
-                tenthArray = incidents.splice(0,200);
-                console.log(tenthArray);
-                break;
-            }
-          index++;
-      }
+      firstArray = incidents.splice(0,64);
+      console.log(firstArray);
+      temp = incidents.splice(incidents.length - 84, incidents.length - 1);
+      tenthArray = temp.splice(0, 70)
+      console.log(tenthArray);
+
+      aircraftDamage1995 = d3.nest()
+        .key(function(d) { return "1995 " + d.Aircraft_Damage; })
+        .rollup(function(v) { return {
+          total: d3.sum(v, function(d) { return 1; })
+        }})
+        .entries(firstArray);
+
+      aircraftDamage1995 = aircraftDamage1995.filter(function (v) {
+        return v.key != "";
+      })
+
+      aircraftDamage2015 = d3.nest()
+        .key(function(d) { return "2015 " + d.Aircraft_Damage; })
+        .rollup(function(v) { return {
+          total: d3.sum(v, function(d) { return 1; })
+        }})
+        .entries(tenthArray);
+
+      aircraftDamage2015 = aircraftDamage2015.filter(function (v) {
+        return v.key != "";
+      })
+
+      phaseOf = d3.nest()
+        .key(function(d) { return d.Broad_Phase_of_Flight; })
+        .rollup(function(v) { return {
+          total: d3.sum(v, function(d) { return 1; })
+        }})
+        .entries(data);
+
+        phaseOf = phaseOf.filter(function (v) {
+          return v.key != "";
+        })
+      
       display();
   });
 }
@@ -261,14 +258,80 @@ function display() {
         break;
       case 2:
           d3.selectAll("svg > *").remove();
-        break;
+          svg.attr("transform", "translate(300, 0)")
+          var yScale = d3.scaleLinear().domain([0, 50]).range([550, 50]);
+          var xScale = d3.scaleOrdinal().domain(["1995 Minor", "2015 Minor", "1995 Substantial", "2015 Substantial", "1995 Destroyed", "2015 Destroyed"]).range([100, 230, 380, 510, 660, 790]);
+          var xAxis = d3.axisBottom().scale(xScale);
+          var yAxis = d3.axisLeft().scale(yScale).ticks(5);
+
+          svg.append('g').attr('class', 'y axis').attr('transform', 'translate(65, 0)').call(yAxis);
+          svg.append('text').attr('class', 'label').attr('transform', 'translate(15, 350) rotate(270)').text('Number of Crashes');
+          svg.append('g').attr('class', 'x axis').attr('transform', 'translate(25, 550)').call(xAxis);
+          svg.append('text').attr('class', 'label').attr('transform', 'translate(400, 595)').text('Aircraft Damage by Year');
+
+          svg.selectAll("bar").data(aircraftDamage1995).enter().append("rect")
+            .style("fill", function(d) {
+              if (d.key == "1995 Minor") return "black";
+              if (d.key == "1995 Substantial") return "blue";
+              if (d.key == "1995 Destroyed") return "red";
+            })
+            .attr("x", function(d) { return xScale(d.key); })
+            .attr("y",  function(d) { return yScale(0); })
+            .attr("width", 60)
+            .attr("height", 0)
+            .transition().duration(750)
+            .attr("y", function(d) { return yScale(d.value.total); })
+            .attr("height", function(d) { return Math.abs(yScale(d.value.total) - yScale(0)); });
+          svg.selectAll("bar").data(aircraftDamage2015).enter().append("rect")
+            .style("fill", function(d) {
+              if (d.key == "2015 Minor") return "black";
+              if (d.key == "2015 Substantial") return "blue";
+              if (d.key == "2015 Destroyed") return "red";
+            })
+            .attr("x", function(d) { return xScale(d.key); })
+            .attr("y",  function(d) { return yScale(0); })
+            .attr("width", 60)
+            .attr("height", 0)
+            .transition().duration(750)
+            .attr("y", function(d) { return yScale(d.value.total); })
+            .attr("height", function(d) { return Math.abs(yScale(d.value.total) - yScale(0)); });
+          break;
       case 3:
           d3.selectAll("svg > *").remove();
+          svg.attr("transform", "translate(300, 0)")
+          var yScale = d3.scaleLinear().domain([0, 200]).range([550, 50]);
+          var xScale = d3.scaleOrdinal().domain(["STANDING", "TAXI", "TAKEOFF", "CLIMB", "CRUISE", "MANEUVERING", "DESCENT", "APPROACH", "LANDING", "UNKNOWN", "UNKNOWN", "UNKNOWN"]).range([100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200]);
+          var xAxis = d3.axisBottom().scale(xScale);
+          var yAxis = d3.axisLeft().scale(yScale).ticks(5);
+    
+          svg.append('g').attr('class', 'y axis').attr('transform', 'translate(65, 0)').call(yAxis);
+          svg.append('text').attr('class', 'label').attr('transform', 'translate(15, 350) rotate(270)').text('Number of Crashes');
+          svg.append('g').attr('class', 'x axis').attr('transform', 'translate(25, 550)').call(xAxis);
+          svg.append('text').attr('class', 'label').attr('transform', 'translate(250, 595)').text('Phase of Flight');
+    
+          svg.selectAll("bar").data(phaseOf).enter().append("rect")
+          .style("fill", function(d) {
+            if (d.key == "STANDING") return "red";
+            if (d.key == "TAXI") return "yellow";
+            if (d.key == "TAKEOFF") return "blue";
+            if (d.key == "CLIMB") return "green";
+            if (d.key == "CRUISE") return "orange";
+            if (d.key == "MANEUVERING") return "purple";
+            if (d.key == "DESCENT") return "brown";
+            if (d.key == "APPROACH") return "pink";
+            if (d.key == "LANDING") return "gray";
+            if (d.key == "UNKNOWN") return "black";
+          })
+          .attr("x", function(d) { return xScale(d.key); })
+          .attr("y",  function(d) { return yScale(0); })
+          .attr("width", 60)
+          .attr("height", 0)
+          .transition().duration(750)
+          .attr("y", function(d) { return yScale(d.value.total); })
+          .attr("height", function(d) { return Math.abs(yScale(d.value.total) - yScale(0)); });
+            break;
         break;
       case 4:
-          d3.selectAll("svg > *").remove();
-        break;
-      case 5:
           d3.selectAll("svg > *").remove();        
           svg.attr("transform", "translate(300, 0)")
           var crashScale = d3.scaleLinear().domain([0, 1000]).range([550, 50]);
@@ -302,7 +365,7 @@ function display() {
           .attr("y", function(d) { return crashScale(d.value.total); })
           .attr("height", function(d) { return Math.abs(crashScale(d.value.total) - crashScale(0)); });
         break;
-      case 6:  
+      case 5:  
       
       d3.selectAll("svg > *").remove();     
       svg.attr("transform", "translate(300, 0)")
@@ -330,7 +393,7 @@ function display() {
       .attr("y", function(d) { return crashScale(d.value.total); })
       .attr("height", function(d) { return Math.abs(crashScale(d.value.total) - crashScale(0)); });
         break;
-      case 7:
+      case 6:
         d3.selectAll("svg > *").remove();        
         svg.attr("transform", "translate(300, 0)")
         var crashScale = d3.scaleLinear().domain([0, 100]).range([550, 50]);
@@ -358,7 +421,7 @@ function display() {
         .attr("y", function(d) { return crashScale(d.value.total); })
         .attr("height", function(d) { return Math.abs(crashScale(d.value.total) - crashScale(0)); });
         break;
-      case 8:
+      case 7:
         // console.log(byMake);
         // bar graph number of crashes by airplane make
         d3.selectAll("svg > *").remove();
@@ -388,9 +451,6 @@ function display() {
         .transition().duration(750)
         .attr("y", function(d) { return crashScale(d.value.total); })
         .attr("height", function(d) { return Math.abs(crashScale(d.value.total) - crashScale(0)); });
-        break;
-      case 9:
-          d3.selectAll("svg > *").remove();
         break;
     }
   });
