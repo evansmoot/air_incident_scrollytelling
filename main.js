@@ -1,13 +1,5 @@
 window.onload = start;
 var firstArray;
-var secondArray;
-var thirdArray;
-var fourthArray;
-var fifthArray;
-var sixthArray;
-var seventhArray;
-var eighthArray;
-var ninthArray;
 var tenthArray;
 var temp;
 
@@ -307,7 +299,7 @@ function display() {
           svg.append('g').attr('class', 'y axis').attr('transform', 'translate(65, 0)').call(yAxis);
           svg.append('text').attr('class', 'label').attr('transform', 'translate(15, 350) rotate(270)').text('Number of Crashes');
           svg.append('g').attr('class', 'x axis').attr('transform', 'translate(25, 550)').call(xAxis);
-          svg.append('text').attr('class', 'label').attr('transform', 'translate(250, 595)').text('Phase of Flight');
+          svg.append('text').attr('class', 'label').attr('transform', 'translate(470, 595)').text('Phase of Flight');
     
           svg.selectAll("bar").data(phaseOf).enter().append("rect")
           .style("fill", function(d) {
